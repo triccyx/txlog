@@ -1,0 +1,21 @@
+{
+    "enabled": true,
+    "enableSignalManager": false    ,
+    "enableSizeRotation": false,
+    "enableTimeRotation": false,
+    "enableCloseRotation": false,
+    "enableCrashStackPrint": false,
+    "enableRotation": false,
+    "enableTime": false,
+    "enableWriteToFile": false,
+    "maxFileSize": 2097152,
+    "rotationTime": {
+        "hour": 23,
+        "minutes": 59,
+        "seconds": 59
+    },
+    "signalFile": "./signal.log",
+    "fileName": "mylog.log",
+    "basePath": "./log",
+    "archivePath": "./archive"
+}

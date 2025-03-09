@@ -12,8 +12,6 @@
 #include <string>
 #include <unordered_map>
 
-
-
 // color
 enum LogColor_e
 {
@@ -40,56 +38,15 @@ inline static std::unordered_map<LogColor_e, std::string> colorToString{
 // severity
 enum Severity : int
 {
-    critical = 7,
-    exception = 6,
-    error = 5,  // todo luca publish error
-    warning = 4,
-    info = 3,
-    trace = 2,
-    debug = 1,
-    none = 0
+    critical = 0,
+    exception = 1,
+    error = 2,
+    warning = 3,
+    info = 4,
+    trace = 5,
+    debug = 6,
+    none = 7
 };
-// modules
-enum Modules : int
-{
-    core,
-    app,
-    communication,
-    dynamicloading,
-    test,
-    util,
-    inout,
-    i2c,
-    config,
-    unknown
-};
-
-inline std::string moduleToString(Modules module)
-{
-    switch (module)
-    {
-        case Modules::core:
-            return "CORE";
-        case Modules::app:
-            return "APPL";
-        case Modules::communication:
-            return "COMM";
-        case Modules::dynamicloading:
-            return "DYNA";
-        case Modules::test:
-            return "TEST";
-        case Modules::util:
-            return "UTIL";
-        case Modules::inout:
-            return "INOU";
-        case Modules::i2c:
-            return "I2C_";
-        case Modules::config:
-            return "CONF";
-        default:
-            return "UNKN";
-    }
-}
 
 inline std::string severityToString(Severity error)
 {

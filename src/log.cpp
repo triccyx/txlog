@@ -1,3 +1,8 @@
+/**
+ * @author Luca Tricerri <triccyx@gmail.com>
+ * @date 03-2025
+ */
+
 #include "log.h"
 
 #include <sys/time.h>
@@ -9,6 +14,8 @@
 #include <list>
 #include <map>
 #include <mutex>
+
+#include "config.h"
 
 void Log::init()
 {
@@ -40,4 +47,9 @@ void Log::init()
                });
                */
     }
+}
+
+std::string Log::getVersion() const
+{
+    return PROJECT_VER;
 }

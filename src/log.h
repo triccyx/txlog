@@ -1,3 +1,8 @@
+/**
+ * @author Luca Tricerri <triccyx@gmail.com>
+ * @date 03-2025
+ */
+
 #pragma once
 
 #include <locale>
@@ -17,9 +22,9 @@ class Log
 
     LogConfig logConfig;
     LogDepot logDepot{logConfig};
+    std::string getVersion() const;
 
-   public:
-    static Log &Instance()
+    static Log& Instance()
     {
         static Log instance;
         return instance;
@@ -27,12 +32,28 @@ class Log
 
    private:
     Log() = default;
-    Log *operator=(Log const &) = delete;
-    Log(Log const &) = delete;
+    Log(const Log&) = delete;
+    Log& operator=(const Log&) = delete;
 };
 
+#if __cplusplus >= 201703L
+#include "magic_enum.hpp"
 template <typename SEVERITY, typename MODULE>
 constexpr auto LOG(SEVERITY severity, MODULE module)
 {
-    return Line(Log::Instance().logDepot, severity, module);
+    auto moduleString = std::string(magic_enum::enum_name(module));
+    return Line(Log::Instance().logDepot, Log::Instance().logConfig, severity, moduleString);
+}
+#endif
+
+template <typename SEVERITY>
+constexpr auto LOG(SEVERITY severity, const std::string& module)
+{
+    return Line(Log::Instance().logDepot, Log::Instance().logConfig, severity, module);
+}
+
+template <typename SEVERITY>
+constexpr auto LOG(SEVERITY severity, const char* module)
+{
+    return Line(Log::Instance().logDepot, Log::Instance().logConfig, severity, module);
 }

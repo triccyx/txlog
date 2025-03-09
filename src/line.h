@@ -1,6 +1,6 @@
 /**
  * @author Luca Tricerri <triccyx@gmail.com>
- * @date 05-2024
+ * @date 03-2025
  */
 
 #pragma once
@@ -8,11 +8,11 @@
 #include "logconst.h"
 
 class LogDepot;
-
+class LogConfig;
 class Line
 {
    public:
-    Line(LogDepot &logDepot, Severity severity, Modules module);
+    Line(LogDepot &logDepot, LogConfig &logConfig, Severity severity, const std::string &module);
     Line(const Line &) = delete;
     Line(const Line &&);
     ~Line();
@@ -36,6 +36,7 @@ class Line
     std::stringstream _currentLogLine;
     std::stringstream _currentLogLineToFile;
     LogDepot &_logDepot;
+    LogConfig &_logConfig;
     Severity _severity;
-    Modules _module;
+    std::string _module;
 };

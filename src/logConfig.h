@@ -1,6 +1,6 @@
 /**
  * @author Luca Tricerri <triccyx@gmail.com>
- * @date 05-2024
+ * @date 03-2025
  */
 
 #pragma once
@@ -12,19 +12,21 @@ class LogConfig
    public:
     LogConfig();
 
-    bool enabled{true};
-    bool enableSignalManager{true};
-    bool enableSizeRotation{true};
-    bool enableTimeRotation{true};
-    bool enableCloseRotation{true};
-    bool enableCrashStackPrint{true};
-    bool disableRotation{true};
-    int maxFileSize{2097152};
-    std::tuple<int /*hour*/, int /*minutes*/, int /*seconds*/> rotationTime{23, 59, 59};
-    std::string signalFile{"/usr/local/logs/signal.log"};
-    std::string fileName{"mylog.log"};
-    std::string basePath{"/usr/local/logs"};
-    std::string archivePath{"/usr/local/logs/archive"};
+    bool _enabled{true};
+    bool _enableSignalManager{false};
+    bool _enableSizeRotation{false};
+    bool _enableTimeRotation{false};
+    bool _enableCloseRotation{false};
+    bool _enableCrashStackPrint{false};
+    bool _enableRotation{false};
+    bool _enableTime{true};
+    bool _enableWriteToFile{true};
+    int _maxFileSize{2097152};
+    std::tuple<int /*hour*/, int /*minutes*/, int /*seconds*/> _rotationTime{23, 59, 59};
+    std::string _signalFile{"signal.log"};
+    std::string _fileName{"mylog.log"};
+    std::string _basePath{"/usr/local/logs"};
+    std::string _archivePath{"/usr/local/archive"};
 
     bool isPresent() const;
 

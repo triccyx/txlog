@@ -105,7 +105,7 @@
 //  exception.
 //  - normally libgcc is already linked to your program by default.
 //
-//#define BACKWARD_HAS_LIBUNWIND 1 //<<--missing libunwind
+// #define BACKWARD_HAS_LIBUNWIND 1 //<<--missing libunwind
 //  - libunwind provides, in some cases, a more accurate stacktrace as it knows
 //  to decode signal handler frames and lets us edit the context registers when
 //  unwinding, allowing stack traces over bad function references.
@@ -2213,7 +2213,7 @@ class TraceResolverLinuxImpl<trace_resolver_tag::libdw>
         }
 #endif
 
-//#define BACKWARD_I_DO_NOT_RECOMMEND_TO_ENABLE_THIS_HORRIBLE_PIECE_OF_CODE
+// #define BACKWARD_I_DO_NOT_RECOMMEND_TO_ENABLE_THIS_HORRIBLE_PIECE_OF_CODE
 #ifdef BACKWARD_I_DO_NOT_RECOMMEND_TO_ENABLE_THIS_HORRIBLE_PIECE_OF_CODE
         if (!cudie)
         {

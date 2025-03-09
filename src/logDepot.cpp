@@ -1,8 +1,7 @@
 /**
  * @author Luca Tricerri <triccyx@gmail.com>
- * @date 05-2024
+ * @date 03-2025
  */
-
 #include "logDepot.h"
 
 #include <cxxabi.h>  // for __cxa_demangle
@@ -23,35 +22,26 @@
 
 #include "logconst.h"
 
-//#include "backward.hpp"
+// #include "backward.hpp"
 
 LogDepot::LogDepot(LogConfig& logConfig)
     : _logConfig(logConfig)
 {
     if (logConfig.isPresent())
     {
-        _enableSizeRotation = logConfig.enableSizeRotation;
-        _enableTimeRotation = logConfig.enableTimeRotation;
-        _enableCloseRotation = logConfig.enableCloseRotation;
-        _enablePrintCrashStack = logConfig.enableCrashStackPrint;
-        _maxFileSize = logConfig.maxFileSize;
-        _rotationTime = logConfig.rotationTime;
-        _signalFile = logConfig.signalFile;
-        _fileName = logConfig.fileName;
-        _basePath = logConfig.basePath;
-        _archivePath = logConfig.archivePath;
-        std::cerr << "LogConfig found" << std::endl;
+        _signalFile = logConfig._signalFile;
+        _fileName = logConfig._fileName;
+        _basePath = logConfig._basePath;
+        _archivePath = logConfig._archivePath;
     }
     else
     {
-        std::cerr << "ERROR LogConfig not found" << std::endl;
+        std::cerr << "WARNING LogConfig not found" << std::endl;
 
         _logDisabled = true;
         return;
     }
 
-    createFolderIfNotExist(_basePath);
-    createFolderIfNotExist(_archivePath);
     createFileIfNotExist();
 
     _rotateInTimeThread = std::make_unique<std::thread>(&LogDepot::rotateIfTimeIsReached, this);
@@ -59,12 +49,14 @@ LogDepot::LogDepot(LogConfig& logConfig)
 
 void LogDepot::createFileIfNotExist()
 {
+    createFolderIfNotExist(_basePath);
+    createFolderIfNotExist(_archivePath);
     _fs = std::ofstream(_basePath + "/" + _fileName, std::ofstream::out | std::ofstream::app);
 }
 
 LogDepot::~LogDepot()
 {
-    if (_enableCloseRotation)
+    if (_logConfig._enableCloseRotation)
     {
         std::cerr << "Do close rotation" << std::endl;
         logInsideLogger(" | ROTATION   | Do rotation for close application");
@@ -77,15 +69,18 @@ LogDepot::~LogDepot()
 
 bool LogDepot::log(const std::string& toLog, const std::string& toLogToFile)
 {
-    if (!_logConfig.enabled)
+    if (!_logConfig._enabled)
     {
         return true;
     }
     std::lock_guard<std::mutex> lock(_mutex);
     std::cerr << toLog << std::flush << std::endl;
-    _fs << toLogToFile << std::flush << std::endl;
 
-    // rotateIfSizeExceeded();
+    if (_logConfig._enableWriteToFile)
+    {
+        _fs << toLogToFile << std::flush << std::endl;
+        rotateIfSizeExceeded();
+    }
     return true;
 }
 
@@ -130,31 +125,27 @@ bool LogDepot::rotateSingle(int signum)
         return false;
     }
     {
-        std::lock_guard<std::mutex> lock(_mutex);
         _fs.close();
     }
 
     rotateFileInFs(fileToRotate);
 
-    std::lock_guard<std::mutex> lock(_mutex);
     _fs = std::ofstream(fileToRotate);
 
-    // signal file
-    _ofs.open(_signalFile, std::ofstream::out | std::ofstream::app);
-    _ofs << getDateWithMsecNow() << " | Rotate file:" << fileToRotate << " for signal:" << signum << " |";
-    _ofs.close();
+    // update signal file
+    _ofs = std::ofstream(_basePath + "/" + _signalFile, std::ofstream::out | std::ofstream::app);
+    _ofs << getDateWithMsecNow() << " | Rotate file:" << fileToRotate << " for signal:" << signum << " |"<<std::endl;
     return true;
 }
 
 bool LogDepot::rotateIfSizeExceeded()
 {
-    if (!_enableSizeRotation)
+    if (!_logConfig._enableSizeRotation)
     {
-        return false;
+        return true;
     }
 
-    std::lock_guard<std::mutex> lock(_mutex);
-    if (_fs.tellp() > _maxFileSize)
+    if (_fs.tellp() > _logConfig._maxFileSize)
     {
         std::stringstream ss;
         ss << " | ROTATION   | Do rotation for dimension exceeded";
@@ -169,9 +160,9 @@ void LogDepot::rotateIfTimeIsReached()
 {
     while (_rotationCheckTimeIsActive)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        if (!_enableTimeRotation)
+        if (!_logConfig._enableTimeRotation)
         {
             continue;
         }
@@ -192,9 +183,8 @@ bool LogDepot::checkIfItIsTimeToRotate()
     std::tm* timeinfo = std::localtime(&currentTime);
 
     // Check if it's time to rotate
-    if (timeinfo->tm_hour == std::get<0>(_rotationTime) && timeinfo->tm_min == std::get<1>(_rotationTime) && timeinfo->tm_sec == std::get<2>(_rotationTime))
+    if (timeinfo->tm_hour == std::get<0>(_logConfig._rotationTime) && timeinfo->tm_min == std::get<1>(_logConfig._rotationTime) && timeinfo->tm_sec == std::get<2>(_logConfig._rotationTime))
     {
-        std::cout << "It is midnight, rotate!";
         logInsideLogger("| Do rotation for timeout\n");
         return true;
     }
@@ -202,32 +192,9 @@ bool LogDepot::checkIfItIsTimeToRotate()
     return false;
 }
 
-int LogDepot::secondsToMidnight() const  // Not used for now
-{
-    // Get the current time
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-
-    // Calculate the time until the next midnight
-    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-    std::tm midnight_tm = *std::localtime(&currentTime);
-
-    midnight_tm.tm_hour = 24;
-    midnight_tm.tm_min = 0;
-    midnight_tm.tm_sec = 0;
-
-    std::chrono::system_clock::time_point midnight = std::chrono::system_clock::from_time_t(std::mktime(&midnight_tm));
-    std::chrono::seconds time_until_midnight = std::chrono::duration_cast<std::chrono::seconds>(midnight - now);
-
-    // Get the number of seconds remaining until midnight
-    int seconds_until_midnight = time_until_midnight.count();
-
-    std::cout << "Seconds remaining until midnight: " << seconds_until_midnight << " seconds";
-    return seconds_until_midnight;
-}
-
 void LogDepot::signalRecived(int signal)
 {
-    if (_enablePrintCrashStack)
+    if (_logConfig._enableCrashStackPrint)
     {
         logInsideLogger(myBacktrace());
     }
@@ -245,10 +212,10 @@ void LogDepot::rotateFileInFs(const std::string& fileName)
 {
     try
     {
-        std::string archieveName = calculateArchieveFileName();
+        std::string archieveName = calculateArchiveFileName();
 
         // std::filesystem::make_directory(archieveName);
-        if (!_disableRotation)
+        if (_logConfig._enableRotation)
         {
             std::filesystem::copy(fileName, archieveName);
         }
@@ -263,11 +230,16 @@ void LogDepot::rotateFileInFs(const std::string& fileName)
 void LogDepot::logInsideLogger(const std::string& toWrite)
 {
     std::cerr << toWrite << std::endl;
-    ;
-    std::lock_guard<std::mutex> lock(_mutex);
 
     _fs << getDateWithMsecNow() << toWrite
         << std::flush;
+}
+
+std::string LogDepot::calculateArchiveFileName() const
+{
+    std::stringstream ss;
+    ss << _archivePath << "/" << getDateWithMsecNow() + "_" + _fileName;
+    return ss.str();
 }
 
 std::string LogDepot::myBacktrace(int skip)
@@ -282,11 +254,4 @@ std::string LogDepot::myBacktrace(int skip)
     p.print(st, ss);
     return ss.str();
     */
-}
-
-std::string LogDepot::calculateArchieveFileName()
-{
-    std::stringstream ss;
-    ss << _archivePath << "/" << getDateWithoutMsecNow() + "_" + _fileName;
-    return ss.str();
 }

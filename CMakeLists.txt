@@ -19,7 +19,14 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Unit test option
-option(UNITTEST "UNITTEST enable" OFF)
+option(UNITTEST "UNITTEST enable" ON)
+option(COVERAGE "Coverage enable" ON)
+
+if(COVERAGE)
+    message("********Coverage enabled for project ${PROJECT_NAME}********")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 --coverage")
+endif()
 
 # FetchContent allows pulling in external repos
 include(FetchContent)
@@ -49,6 +56,19 @@ if(UNITTEST)
   )
   FetchContent_MakeAvailable(googletest)
   message(STATUS "GTEST fetched")
+endif()
+
+# Fetch magic_enum
+if(CMAKE_CXX_STANDARD GREATER_EQUAL 17)
+  FetchContent_Declare(
+    magic_enum
+    GIT_REPOSITORY https://github.com/Neargye/magic_enum.git
+    GIT_TAG v0.8.0
+  )
+  set(MAGIC_ENUM_OPT_BUILD_EXAMPLES OFF)
+  set(MAGIC_ENUM_OPT_BUILD_TESTS OFF)
+  FetchContent_MakeAvailable(magic_enum)
+  message(STATUS "Fetch magic_enum")
 endif()
 
 # Build library sources

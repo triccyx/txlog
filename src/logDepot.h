@@ -1,7 +1,6 @@
-
 /**
  * @author Luca Tricerri <triccyx@gmail.com>
- * @date 05-2024
+ * @date 03-2025
  */
 
 #pragma once
@@ -35,16 +34,9 @@ class LogDepot
 
     void logInsideLogger(const std::string& toWrite);
 
-    int secondsToMidnight() const;
     bool checkIfItIsTimeToRotate();
 
     std::string myBacktrace(int skip = 1);
-
-    bool _enableSizeRotation{true};
-    bool _enableTimeRotation{true};
-    bool _enableCloseRotation{true};
-    bool _enablePrintCrashStack{true};
-    bool _disableRotation{true};
 
     const int _signalTimeOut{1000};
     const int _signalCloseApplication{1001};
@@ -58,7 +50,7 @@ class LogDepot
     std::string _basePath;
     std::string _archivePath;
 
-    std::string _signalFile{"/usr/local/logs/signal.log"};
+    std::string _signalFile{"./signal.log"};
     std::ofstream _ofs;
 
     std::unique_ptr<std::thread> _rotateInTimeThread;
@@ -66,6 +58,6 @@ class LogDepot
     LogConfig& _logConfig;
 
    private:
-    std::string calculateArchieveFileName();
+    std::string calculateArchiveFileName() const;
     bool _logDisabled{false};
 };
