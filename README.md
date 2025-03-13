@@ -1,8 +1,8 @@
-# 2. Abstract
+ # 1. Abstract
 
 **txlog** library provides straightforward logging capabilities for C++ applications. It focuses on minimizing complexity while offering essential features such as configurable log levels and streamlined message formatting. Designed for ease of integration, it allows developers to quickly enable logging without introducing extensive dependencies or performance overhead. The architecture is extensible, permitting further customization and enhancements to suit diverse project requirements.
 
-# 3. Usage
+# 2. Usage
 
 1. Include the header file:
 
@@ -13,10 +13,9 @@
 2. Use the method `LOG` to log messages:
 
 ```cpp
-
 void myFunction()
 {
-    LOG(info,"mymodule");
+    LOG(info, "mymodule");
 }
 ```
 
@@ -38,9 +37,9 @@ FetchContent_MakeAvailable(txlog)
 target_link_libraries(mytarget PRIVATE txlog)
 ```
 
-## 3.1. Severity
+## 2.1. Severity
 
-The severity level are the following:
+The severity levels are as follows:
 
 -   critical
 -   exception
@@ -51,7 +50,7 @@ The severity level are the following:
 -   debug
 -   none
 
-## 3.2. Module
+## 2.2. Module
 
 1. Define the module as a string:
    The module is the name of the module that is logging the message.
@@ -81,13 +80,13 @@ LOG(info, Module::MYMODULE);
 
 This solution is only available if you use at least **c++17 compiler**
 
-# 4. Prerequisites
+# 3. Prerequisites
 
 -   Linux system
 -   c++11 compiler
 -   cmake
 
-# 5. Configuration file
+# 4. Configuration file
 
 The `./configuration/logconfig.json` file is used to configure the logging system.
 
@@ -111,25 +110,25 @@ The `./configuration/logconfig.json` file is used to configure the logging syste
 
 If the configuration file **is not present**, the default values are used.
 
-# 6. Advanced usage
+# 5. Advanced usage
 
-## 6.1. File rotation for size
+## 5.1. File rotation for size
 
 To enable file rotation based on size, set the `enableSizeRotation` option to `true` and specify the `maxFileSize` in the configuration file. The log file will rotate when it reaches the specified size.
 
-## 6.2. File rotation for time
+## 5.2. File rotation for time
 
 To enable file rotation based on time, set the `enableTimeRotation` option to `true` and specify the `rotationTime` in the configuration file. The log file will rotate at the specified time each day.
 
-## 6.3. File rotation for close
+## 5.3. File rotation for close
 
 To enable file rotation when the application closes, set the `enableCloseRotation` option to `true`. The log file will rotate when the application closes.
 
-## 6.4. Stack trace
+## 5.4. Stack trace
 
 Not available for now
 
-# 7. Coverage and Unittest
+# 6. Coverage and Unittest
 
 To execute the unittest, run the following command:
 
@@ -141,11 +140,11 @@ make RunUnitTest
 To create the coverage report, run the following command:
 
 ```bash
-make -DCOVERAGE=ON -DUNITTEST=ON ..
+cmake -DCOVERAGE=ON -DUNITTEST=ON ..
 make EvaluateCoverage
 ```
 
-# 8. License
+# 7. License
 
 The software is licensed under the MIT License:
 
