@@ -78,3 +78,5 @@ add_subdirectory(src)
 if(UNITTEST)
   add_subdirectory(unittest)
 endif()
+
+add_subdirectory(example)

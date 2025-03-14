@@ -21,31 +21,29 @@ void Log::init()
 {
     if (logDepot._enableSignalManager)
     {
-        /*
-        signal(SIGTERM, [&](int signum)
+        signal(SIGTERM, [](int signum)
                {
-                   logDepot.signalRecived(signum);
+                   Log::Instance().logDepot.signalRecived(signum);
                });
 
-        signal(SIGINT, [&logDepot](int signum)
+        signal(SIGINT, [](int signum)
                {
-                   logDepot.signalRecived(signum);
+                   Log::Instance().logDepot.signalRecived(signum);
                });
 
-        signal(SIGKILL, [&logDepot](int signum)
+        signal(SIGKILL, [](int signum)
                {
-                   logDepot.signalRecived(signum);
+                   Log::Instance().logDepot.signalRecived(signum);
                });
 
-        signal(SIGABRT, [&logDepot](int signum)
+        signal(SIGABRT, [](int signum)
                {
-                   logDepot.signalRecived(signum);
+                   Log::Instance().logDepot.signalRecived(signum);
                });
-        signal(SIGSEGV, [&logDepot](int signum)
+        signal(SIGSEGV, [](int signum)
                {
-                   logDepot.signalRecived(signum);
+                   Log::Instance().logDepot.signalRecived(signum);
                });
-               */
     }
 }
 

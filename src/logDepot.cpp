@@ -198,13 +198,42 @@ void LogDepot::signalRecived(int signal)
     {
         logInsideLogger(myBacktrace());
     }
+
+    // Convert signal number to string representation
+    std::string signalName;
+    switch (signal) {
+        case SIGINT:
+            signalName = "SIGINT";
+            break;
+        case SIGTERM:
+            signalName = "SIGTERM";
+            break;
+        case SIGSEGV:
+            signalName = "SIGSEGV";
+            break;
+        case SIGABRT:
+            signalName = "SIGABRT";
+            break;
+        case SIGFPE:
+            signalName = "SIGFPE";
+            break;
+        case SIGILL:
+            signalName = "SIGILL";
+            break;
+        case SIGHUP:
+            signalName = "SIGHUP";
+            break;
+        default:
+            signalName = "Signal " + std::to_string(signal);
+            break;
+    }
+
     std::stringstream ss;
-    ss << " | ROTATION   | Signal received:" << signal << " | Do rotation for signal";
+    ss << " | ROTATION   | Signal received:" << signalName << "(" << signal << ")" << " | Do rotation for signal";
     logInsideLogger(ss.str());
     std::cerr << ss.str() << std::endl;
 
     rotateSingle(signal);
-    // kill(getpid(), signum);
     std::quick_exit(0);
 }
 

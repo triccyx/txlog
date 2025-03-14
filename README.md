@@ -1,4 +1,4 @@
- # 1. Abstract
+# 1. Abstract
 
 **txlog** library provides straightforward logging capabilities for C++ applications. It focuses on minimizing complexity while offering essential features such as configurable log levels and streamlined message formatting. Designed for ease of integration, it allows developers to quickly enable logging without introducing extensive dependencies or performance overhead. The architecture is extensible, permitting further customization and enhancements to suit diverse project requirements.
 
@@ -93,7 +93,7 @@ The `./configuration/logconfig.json` file is used to configure the logging syste
 | Configuration Option    | Description                                  | Default Value                                | Development Status |
 | ----------------------- | -------------------------------------------- | -------------------------------------------- | ------------------ |
 | `enabled`               | Enables or disables logging                  | `true`                                       | working            |
-| `enableSignalManager`   | Enables signal handling for log rotation     | `false`                                      | on developing      |
+| `enableSignalManager`   | Enables signal handling for log rotation     | `false`                                      | working            |
 | `enableSizeRotation`    | Enables log rotation based on file size      | `false`                                      | working            |
 | `enableTimeRotation`    | Enables log rotation based on time           | `false`                                      | working            |
 | `enableCloseRotation`   | Enables log rotation when application closes | `false`                                      | working            |
@@ -124,11 +124,23 @@ To enable file rotation based on time, set the `enableTimeRotation` option to `t
 
 To enable file rotation when the application closes, set the `enableCloseRotation` option to `true`. The log file will rotate when the application closes.
 
-## 5.4. Stack trace
+## 5.4. File rotation for signal
+
+To enable file rotation when a signal is received, set the `enableSignalRotation` option to `true`. The log file will rotate when the signal is received.
+
+## 5.5. Stack trace print
 
 Not available for now
 
-# 6. Coverage and Unittest
+# 6. Log your type
+
+To log your type, you need to overload the `operator<<` for your type.
+
+```cpp
+LOG(info, "mytype") << mytype;
+```
+
+# 7. Coverage and Unittest
 
 To execute the unittest, run the following command:
 
@@ -144,7 +156,7 @@ cmake -DCOVERAGE=ON -DUNITTEST=ON ..
 make EvaluateCoverage
 ```
 
-# 7. License
+# 8. License
 
 The software is licensed under the MIT License:
 
