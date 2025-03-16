@@ -19,9 +19,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Unit test option
-option(UNITTEST "UNITTEST enable" ON)
-option(COVERAGE "Coverage enable" ON)
-
+option(UNITTEST "UNITTEST enable" OFF)
+option(COVERAGE "Coverage enable" OFF)
+option(EXAMPLE "Example enable" OFF)
 if(COVERAGE)
     message("********Coverage enabled for project ${PROJECT_NAME}********")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
@@ -79,4 +79,6 @@ if(UNITTEST)
   add_subdirectory(unittest)
 endif()
 
-add_subdirectory(example)
+if(EXAMPLE)
+  add_subdirectory(example)
+endif()
